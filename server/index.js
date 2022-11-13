@@ -5,6 +5,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+var md5 = require('md5');
 const cors = require("cors");
 app.use(cors());
 
@@ -76,7 +77,8 @@ app.post("/register", (req, res) => {
         firstName,
         lastName,
         email,
-        password,
+        // password,
+        password: md5(password),
       });
       user.save();
       res.send({ message: "Successfully Registered :)" });
@@ -89,7 +91,7 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
   UserModel.findOne({ email: email }, (err, user) => {
     if (user) {
-      if (password == user.password) {
+      if (md5(password) == user.password) {
         res.send({ message: "Login SuccessFull :)", user });
       } else {
         res.send({ message: "Password didn't match" });
@@ -105,7 +107,7 @@ app.post("/admin-login", (req, res) => {
   const { email, password } = req.body;
   AdminModel.findOne({ email: email }, (err, user) => {
     if (user) {
-      if (password == user.password) {
+      if (md5(password) == user.password) {
         res.send({ message: "Login SuccessFull :)", user });
       } else {
         res.send({ message: "Password didn't match" });
@@ -128,6 +130,10 @@ app.post("/search", (req, res) => {
   user.save();
   res.send({ message: "Check Availiblity in next page :)" });
 });
+
+// 
+
+
 
 /*============================
         listen
